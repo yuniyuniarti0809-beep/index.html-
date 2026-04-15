@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Puzzle Modern</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --empty: #e2e8f0;
+            --text: #ffffff;
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; 
+            background: #f8fafc; color: #1e293b;
+        }
+        h1 { margin-bottom: 10px; }
+        
+        #puzzle-board { 
+            display: grid; grid-template-columns: repeat(3, 100px); 
+            grid-gap: 10px; background: #cbd5e1; padding: 10px; 
+            border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        
+        .tile { 
+            width: 100px; height: 100px; background: var(--primary); 
+            color: var(--text); display: flex; align-items: center; 
+            justify-content: center; font-size: 28px; font-weight: bold;
+            border-radius: 8px; cursor: pointer; transition: transform 0.2s, background 0.2s;
+        }
+        .tile:hover { filter: brightness(1.1); }
+        .empty { background: var(--empty); cursor: default; }
+        
+        .controls { margin-top: 30px; }
+        button { 
+            background: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 6px; font-size: 16px; 
+            cursor: pointer; transition: background 0.3s;
+        }
+        button:hover { background: #4f46e5; }
+    </style>
+</head>
+<body>
+
+    <h1>Sliding Puzzle</h1>
+    <div id="puzzle-board"></div>
+    
+    <div class="controls">
+        <button onclick="shuffleBoard()">Acak Puzzle Baru</button>
+    </div>
+
+    <script>
+        let board = [1, 2, 3, 4, 5, 6, 7, 8, null];
+
+        function drawBoard() {
+            const boardDiv = document.getElementById('puzzle-board');
+            boardDiv.innerHTML = '';
+            board.forEach((val, index) => {
+                const tile = document.createElement('div');
+                tile.className = val ? 'tile' : 'tile empty';
+                tile.innerText = val || '';
+                tile.onclick = () => moveTile(index);
+                boardDiv.appendChild(tile);
+            });
+        }
+
+        function moveTile(index) {
+            const emptyIndex = board.indexOf(null);
+            const row = Math.floor(index / 3);
+            const col = index % 3;
+            const emptyRow = Math.floor(emptyIndex / 3);
+            const emptyCol = emptyIndex % 3;
+
+            // Cek apakah bersebelahan (atas, bawah, kiri, kanan)
+            const isAdjacent = (Math.abs(row - emptyRow) + Math.abs(col - emptyCol)) === 1;
+
+            if (isAdjacent) {
+                [board[index], board[emptyIndex]] = [board[emptyIndex], board[index]];
+                drawBoard();
+            }
+        }
+
+        function shuffleBoard() {
+            // Mengacak dengan menukar posisi secara acak
+            for (let i = board.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [board[i], board[j]] = [board[j], board[i]];
+            }
+            drawBoard();
+        }
+
+        drawBoard();
+    </script>
+</body>
+</html>
